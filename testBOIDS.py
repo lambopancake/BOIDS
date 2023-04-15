@@ -5,11 +5,11 @@ if __name__ == '__main__':
 	
 
 	screenSize = (1200,700)
-
+	screen = pygame.display.set_mode(screenSize)
 	bArr = [None] * 90
 	for boids in range(90):
-		bArr[boids] = BOIDS([random.randint(0,screenSize[0]),random.randint(0,screenSize[1])], screenSize)
-	screen = pygame.display.set_mode(screenSize)
+		bArr[boids] = BOIDS([random.randint(0,screenSize[0]),random.randint(0,screenSize[1])], screenSize, screen)
+	
 
 	while True:
 
@@ -18,7 +18,9 @@ if __name__ == '__main__':
 
 		for b in range(90):
 			bArr[b].main(screen)
-			bArr[b].Alignment(bArr,b,10)
+			#bArr[b].separation(bArr,b)
+			bArr[b].Alignment(bArr,b,150)
+			
 
 
 

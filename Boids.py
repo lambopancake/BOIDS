@@ -1,13 +1,13 @@
 import math,pygame, random
-from vector import vector
 class BOIDS:
 	
 	#acceleration is the rate that velocity increases
-	def __init__(self, pos, screenSize):
+	def __init__(self, pos, screenSize,screen = None):
 		self.accel = pygame.math.Vector2()
 		self.velocity = pygame.math.Vector2(random.randint(-50,50)*0.01, random.randint(-50,50)*0.01)
 		self.pos = pos #[x,y]
 		self.screenSize = screenSize
+		self.screen = screen
 
 
 	def move(self):
@@ -40,22 +40,51 @@ class BOIDS:
 			self.velocity[1] = -1
 
 
-	def separation(self, sep = 1):
-		pass
+	def neighbor(self, i, arr, limDist):
+		neighbor = []
+		for boid in range(i, len(arr), 1):
+			dist = math.sqrt(pow((arr[boid].pos[0]- self.pos[0]),2) + pow((arr[boid].pos[1]- self.pos[1]),2))
+			if(dist < limDist):
+				pygame.draw.line(self.screen, "GREEN",self.pos,arr[boid].pos)
+				neighbor.append(arr[boid])
+		return neighbor
 
-	def Alignment(self,boidArr, i, per):
+	def separation(self, boidArr, i, sep = 10):
+		neig = self.neighbor(i,boidArr, 70)
+		for boid in range(i, len(boidArr), 1):
+			if((boidArr[boid] in neig)):
+				if(abs(boidArr[boid].pos[0] - self.pos[0]) < sep):
+					if(boidArr[boid].pos[0] <= self.pos[0]):
+						self.velocity[0] += 0.1
+					else:
+						self.velocity[0] -= 0.1
+
+				if(abs(boidArr[boid].pos[1] - self.pos[1]) < sep):
+					if(boidArr[boid].pos[1] <= self.pos[1]):
+						self.velocity[1] += 0.1
+					else:
+						self.velocity[1] -= 0.1
+
+
+				
+
+	def Alignment(self,boidArr, i, per = 70):
 		x = 0
 		y = 0
 		per /= 100
+		neig = self.neighbor(i,boidArr, 100)
 		for boid in range(i, len(boidArr), 1):
-			x = boidArr[boid].velocity[0]
-			y = boidArr[boid].velocity[1]
+			if(boidArr[boid] in neig):
+				x = boidArr[boid].velocity[0]
+				y = boidArr[boid].velocity[1]
 		#average speed and angle of the entire flock
 		x /= len(boidArr)
 		y /= len(boidArr)
 		#print(aS, " ", aA)
-		self.accel = [x * per, y * per]
-		maxA = 0.5
+		# self.accel = [x * per, y * per]
+		self.accel[0] = x * per
+		self.accel[1] = y * per
+		maxA = 0.5# mess around with this number
 		if(self.accel[0] > maxA):
 			self.accel[0] = maxA
 		if(self.accel[0] < -maxA):
@@ -77,11 +106,11 @@ class BOIDS:
 if __name__ == '__main__':
 	
 	screenSize = (1200,700)
-
+	screen = pygame.display.set_mode(screenSize)
 	bArr = [None] * 5
 	for boids in range(5):
-		bArr[boids] = BOIDS([600,350] , screenSize)
-	screen = pygame.display.set_mode(screenSize)
+		bArr[boids] = BOIDS([random.randint(-300,300),random.randint(-300,300)] , screenSize, screen)
+	
 
 	while True:
 		pygame.time.delay(10)
