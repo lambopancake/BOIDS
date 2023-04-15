@@ -1,5 +1,5 @@
 from Boids import BOIDS
-import math,pygame,time, random
+import math,pygame, random
 
 if __name__ == '__main__':
 	
