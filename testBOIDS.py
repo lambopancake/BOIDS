@@ -3,11 +3,11 @@ import math, pygame, random,time
 
 if __name__ == '__main__':
 	
-
+	a = 100
 	screenSize = (1200,700)
 	screen = pygame.display.set_mode(screenSize)
-	bArr = [None] * 100
-	for boids in range(100):
+	bArr = [None] * a
+	for boids in range(a):
 		bArr[boids] = BOIDS([random.randint(0,screenSize[0]),random.randint(0,screenSize[1])], screenSize, screen)
 	
 
@@ -16,7 +16,7 @@ if __name__ == '__main__':
 		pygame.time.delay(1)
 		screen.fill((0,0,0))
 
-		for b in range(100):
+		for b in range(a):
 			bArr[b].main(screen,b, bArr)
 			#bArr[b].Alignment(100)
 			#bArr[b].neighbor(b, bArr,100)

@@ -53,7 +53,7 @@ class BOIDS:
 				self.neighbor[arr[boid]] = dist
 
 	def Separation(self):
-		per = 30
+		per = 35
 		x = 0
 		y = 0
 		keyList = list(self.neighbor.keys())
@@ -61,7 +61,7 @@ class BOIDS:
 			if(self.neighbor[keyList[near]] < per):
 				x += self.pos[0] - keyList[near].pos[0]
 				y += self.pos[1] - keyList[near].pos[1]
-		a = 0.001
+		a = 0.0005
 		self.accel[0] += x*a
 		self.accel[1] += y*a
 
@@ -76,7 +76,7 @@ class BOIDS:
 		if(len(keyList) > 0):	
 			x /= len(keyList) + 1
 			y /= len(keyList) + 1
-			a = 0.005
+			a = 0.003
 			#print(self.pos," ",x," ",y)
 			self.accel[0] += x*a
 			self.accel[1] += y*a
