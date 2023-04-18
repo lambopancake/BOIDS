@@ -49,7 +49,7 @@ class BOIDS:
 		for boid in range(len(arr)):
 			dist = math.sqrt(pow((arr[boid].pos[0]- self.pos[0]),2) + pow((arr[boid].pos[1]- self.pos[1]),2))
 			if(dist < BOIDS.radDist and self != arr[boid]):
-				pygame.draw.line(self.screen, "GREEN",self.pos,arr[boid].pos)
+				#pygame.draw.line(self.screen, "GREEN",self.pos,arr[boid].pos)
 				self.neighbor[arr[boid]] = dist
 
 	def Separation(self):
@@ -63,10 +63,10 @@ class BOIDS:
 			x /= len(keyList) + 1
 			y /= len(keyList) + 1
 			#figure out how to use the average (a,y)
-			pygame.draw.circle(self.screen,"WHITE",(x,y),10,0)
+			#pygame.draw.circle(self.screen,"WHITE",(x,y),10,0)
 			x = self.pos[0] - x
 			y = self.pos[1] - y
-			a = 0.002
+			a = 0.009
 			#print(self.pos," ",x," ",y)
 			self.accel[0] += x*a
 			self.accel[1] += y*a
@@ -101,22 +101,22 @@ class BOIDS:
 			x /= len(keyList) + 1
 			y /= len(keyList) + 1
 			#figure out how to use the average (a,y)
-			pygame.draw.circle(self.screen,"WHITE",(x,y),10,0)
+			#pygame.draw.circle(self.screen,"WHITE",(x,y),10,0)
 			x = self.pos[0] - x
 			y = self.pos[1] - y
-			a = 0.01
+			a = 0.005
 			#print(self.pos," ",x," ",y)
 			self.accel[0] -= x*a
 			self.accel[1] -= y*a
 
 	def main(self,screen, i, arr,):
-		pygame.draw.circle(screen,"BLUE",(self.pos[0],self.pos[1]),15,0)
+		pygame.draw.circle(screen,"BLUE",(self.pos[0],self.pos[1]),10,0)
 		#self.velocity = [self.velocity[0] + self.accel[0], self.velocity[1] + self.accel[1]]
 		self.move()
 		self.accel = [0,0]
 		self.neighbors(arr, 130)
-		#self.Cohesion()
-		self.Separation()
+		self.Cohesion()
+		#self.Separation()
 		self.Alignment()
 
 
