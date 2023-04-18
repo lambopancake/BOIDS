@@ -1,13 +1,13 @@
 from Boids import BOIDS
-import math, pygame, random
+import math, pygame, random,time
 
 if __name__ == '__main__':
 	
 
 	screenSize = (1200,700)
 	screen = pygame.display.set_mode(screenSize)
-	bArr = [None] * 90
-	for boids in range(90):
+	bArr = [None] * 100
+	for boids in range(100):
 		bArr[boids] = BOIDS([random.randint(0,screenSize[0]),random.randint(0,screenSize[1])], screenSize, screen)
 	
 
@@ -16,10 +16,13 @@ if __name__ == '__main__':
 		pygame.time.delay(1)
 		screen.fill((0,0,0))
 
-		for b in range(90):
-			bArr[b].main(screen)
+		for b in range(100):
+			bArr[b].main(screen,b, bArr)
+			#bArr[b].Alignment(100)
+			#bArr[b].neighbor(b, bArr,100)
 			#bArr[b].separation(bArr,b)
-			bArr[b].Alignment(bArr,b,150)
+		
+
 			
 
 

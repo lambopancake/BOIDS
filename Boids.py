@@ -1,13 +1,15 @@
-import math,pygame, random
+import math,pygame,random,time
 class BOIDS:
 	
+	radDist = 80
 	#acceleration is the rate that velocity increases
-	def __init__(self, pos, screenSize,screen = None):
-		self.accel = pygame.math.Vector2()
-		self.velocity = pygame.math.Vector2(random.randint(-50,50)*0.01, random.randint(-50,50)*0.01)
+	def __init__(self, pos, screenSize,screen):
+		self.accel = pygame.math.Vector2(random.randint(-50, 50) * 0,random.randint(-50, 50) * 0)
+		self.velocity = pygame.math.Vector2(random.randint(-50,50) * 0.01, random.randint(-50,50) * 0.01)
 		self.pos = pos #[x,y]
 		self.screenSize = screenSize
 		self.screen = screen
+		self.neighbor = {}
 
 
 	def move(self):
@@ -26,99 +28,117 @@ class BOIDS:
 		if(self.pos[1] < 0):
 			self.pos[1] = self.screenSize[1]
 
-
+		#print("this should be accel ",self.accel)
 		self.velocity[0] += self.accel[0]
 		self.velocity[1] += self.accel[1]
+		#print(self, ": ", self.velocity)
 
-		if(self.velocity[0] > 1):
-			self.velocity[0] = 1
-		if(self.velocity[0] < -1):
-			self.velocity[0] = -1
-		if(self.velocity[1] > 1):
-			self.velocity[1] = 1
-		if(self.velocity[1] < -1):
-			self.velocity[1] = -1
+		a = 1
+		if(self.velocity[0] > a):
+			self.velocity[0] = a
+		if(self.velocity[0] < -a):
+			self.velocity[0] = -a
+		if(self.velocity[1] > a):
+			self.velocity[1] = a
+		if(self.velocity[1] < -a):
+			self.velocity[1] = -a
 
 
-	def neighbor(self, i, arr, limDist):
-		neighbor = []
-		for boid in range(i, len(arr), 1):
+	def neighbors(self, arr, limDist):
+		self.neighbor = {}
+		for boid in range(len(arr)):
 			dist = math.sqrt(pow((arr[boid].pos[0]- self.pos[0]),2) + pow((arr[boid].pos[1]- self.pos[1]),2))
-			if(dist < limDist):
+			if(dist < BOIDS.radDist and self != arr[boid]):
 				pygame.draw.line(self.screen, "GREEN",self.pos,arr[boid].pos)
-				neighbor.append(arr[boid])
-		return neighbor
+				self.neighbor[arr[boid]] = dist
 
-	def separation(self, boidArr, i, sep = 10):
-		neig = self.neighbor(i,boidArr, 70)
-		for boid in range(i, len(boidArr), 1):
-			if((boidArr[boid] in neig)):
-				if(abs(boidArr[boid].pos[0] - self.pos[0]) < sep):
-					if(boidArr[boid].pos[0] <= self.pos[0]):
-						self.velocity[0] += 0.1
-					else:
-						self.velocity[0] -= 0.1
+	def Separation(self):
+		x = self.pos[0]
+		y = self.pos[1]
+		keyList = list(self.neighbor.keys())
+		for nearest in range(len(keyList)):
+			x += keyList[nearest].pos[0]
+			y += keyList[nearest].pos[1]
+		if(len(keyList) > 0):	
+			x /= len(keyList) + 1
+			y /= len(keyList) + 1
+			#figure out how to use the average (a,y)
+			pygame.draw.circle(self.screen,"WHITE",(x,y),10,0)
+			x = self.pos[0] - x
+			y = self.pos[1] - y
+			a = 0.002
+			#print(self.pos," ",x," ",y)
+			self.accel[0] += x*a
+			self.accel[1] += y*a
 
-				if(abs(boidArr[boid].pos[1] - self.pos[1]) < sep):
-					if(boidArr[boid].pos[1] <= self.pos[1]):
-						self.velocity[1] += 0.1
-					else:
-						self.velocity[1] -= 0.1
-
-
-				
-
-	def Alignment(self,boidArr, i, per = 70):
-		x = 0
-		y = 0
-		per /= 100
-		neig = self.neighbor(i,boidArr, 100)
-		for boid in range(i, len(boidArr), 1):
-			if(boidArr[boid] in neig):
-				x = boidArr[boid].velocity[0]
-				y = boidArr[boid].velocity[1]
-		#average speed and angle of the entire flock
-		x /= len(boidArr)
-		y /= len(boidArr)
-		#print(aS, " ", aA)
-		# self.accel = [x * per, y * per]
-		self.accel[0] = x * per
-		self.accel[1] = y * per
-		maxA = 0.5# mess around with this number
-		if(self.accel[0] > maxA):
-			self.accel[0] = maxA
-		if(self.accel[0] < -maxA):
-			self.accel[0] = -maxA
-		if(self.accel[1] > maxA):
-			self.accel[1] = maxA
-		if(self.accel[1] < -maxA):
-			self.accel[1] = -maxA
-
+	def Alignment(self):
+		x = self.velocity[0]
+		y = self.velocity[1]
+		keyList = list(self.neighbor.keys())
+		for nearest in range(len(keyList)):
+			x += keyList[nearest].velocity[0]
+			y += keyList[nearest].velocity[1]
+		if(len(keyList) > 0):	
+			x /= len(keyList) + 1
+			y /= len(keyList) + 1
+			#figure out how to use the average (a,y)
+			#pygame.draw.circle(self.screen,"WHITE",(x,y),10,0)
+			# x = self.pos[0] - x
+			# y = self.pos[1] - y
+			a = 0.09
+			#print(self.pos," ",x," ",y)
+			self.accel[0] += x*a
+			self.accel[1] += y*a
 
 	def Cohesion(self):#https://medium.com/@errazkim/boids-simulation-in-java-407d2e924e1f
-		pass
-	
-	def main(self,screen):
+		x = self.pos[0]
+		y = self.pos[1]
+		keyList = list(self.neighbor.keys())
+		for nearest in range(len(keyList)):
+			x += keyList[nearest].pos[0]
+			y += keyList[nearest].pos[1]
+		if(len(keyList) > 0):	
+			x /= len(keyList) + 1
+			y /= len(keyList) + 1
+			#figure out how to use the average (a,y)
+			pygame.draw.circle(self.screen,"WHITE",(x,y),10,0)
+			x = self.pos[0] - x
+			y = self.pos[1] - y
+			a = 0.01
+			#print(self.pos," ",x," ",y)
+			self.accel[0] -= x*a
+			self.accel[1] -= y*a
+
+	def main(self,screen, i, arr,):
 		pygame.draw.circle(screen,"BLUE",(self.pos[0],self.pos[1]),15,0)
+		#self.velocity = [self.velocity[0] + self.accel[0], self.velocity[1] + self.accel[1]]
 		self.move()
+		self.accel = [0,0]
+		self.neighbors(arr, 130)
+		#self.Cohesion()
+		self.Separation()
+		self.Alignment()
+
 
 
 if __name__ == '__main__':
 	
 	screenSize = (1200,700)
 	screen = pygame.display.set_mode(screenSize)
-	bArr = [None] * 5
-	for boids in range(5):
+	a = 15
+	bArr = [None] * a
+	for boids in range(a):
 		bArr[boids] = BOIDS([random.randint(-300,300),random.randint(-300,300)] , screenSize, screen)
 	
-
+	bArr[boids].accel = [0.01,0.01]
 	while True:
 		pygame.time.delay(10)
 		screen.fill((0,0,0))
 
-		for b in range(5):
-			bArr[b].main(screen)
-			bArr[b].Alignment(bArr,b, 10)
+		for b in range(a):
+			bArr[b].main(screen, b, bArr)
+		
+		#time.sleep(1)
 		
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
