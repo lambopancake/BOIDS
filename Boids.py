@@ -34,11 +34,11 @@ class BOIDS:
 		#print(self, ": ", self.velocity)
 
 		a = 1
-		if(self.velocity[0] > a):
+		if(self.velocity[0] >= a):
 			self.velocity[0] = a
 		if(self.velocity[0] < -a):
 			self.velocity[0] = -a
-		if(self.velocity[1] > a):
+		if(self.velocity[1] >= a):
 			self.velocity[1] = a
 		if(self.velocity[1] < -a):
 			self.velocity[1] = -a
@@ -53,23 +53,18 @@ class BOIDS:
 				self.neighbor[arr[boid]] = dist
 
 	def Separation(self):
-		x = self.pos[0]
-		y = self.pos[1]
+		per = 30
+		x = 0
+		y = 0
 		keyList = list(self.neighbor.keys())
-		for nearest in range(len(keyList)):
-			x += keyList[nearest].pos[0]
-			y += keyList[nearest].pos[1]
-		if(len(keyList) > 0):	
-			x /= len(keyList) + 1
-			y /= len(keyList) + 1
-			#figure out how to use the average (a,y)
-			#pygame.draw.circle(self.screen,"WHITE",(x,y),10,0)
-			x = self.pos[0] - x
-			y = self.pos[1] - y
-			a = 0.009
-			#print(self.pos," ",x," ",y)
-			self.accel[0] += x*a
-			self.accel[1] += y*a
+		for near in range(len(keyList)):
+			if(self.neighbor[keyList[near]] < per):
+				x += self.pos[0] - keyList[near].pos[0]
+				y += self.pos[1] - keyList[near].pos[1]
+		a = 0.001
+		self.accel[0] += x*a
+		self.accel[1] += y*a
+
 
 	def Alignment(self):
 		x = self.velocity[0]
@@ -81,11 +76,7 @@ class BOIDS:
 		if(len(keyList) > 0):	
 			x /= len(keyList) + 1
 			y /= len(keyList) + 1
-			#figure out how to use the average (a,y)
-			#pygame.draw.circle(self.screen,"WHITE",(x,y),10,0)
-			# x = self.pos[0] - x
-			# y = self.pos[1] - y
-			a = 0.09
+			a = 0.005
 			#print(self.pos," ",x," ",y)
 			self.accel[0] += x*a
 			self.accel[1] += y*a
@@ -104,7 +95,7 @@ class BOIDS:
 			#pygame.draw.circle(self.screen,"WHITE",(x,y),10,0)
 			x = self.pos[0] - x
 			y = self.pos[1] - y
-			a = 0.005
+			a = 0.0005
 			#print(self.pos," ",x," ",y)
 			self.accel[0] -= x*a
 			self.accel[1] -= y*a
@@ -116,9 +107,9 @@ class BOIDS:
 		self.accel = [0,0]
 		self.neighbors(arr, 130)
 		self.Cohesion()
-		#self.Separation()
+		self.Separation()
+		# self.neighbors(arr, 130)
 		self.Alignment()
-
 
 
 if __name__ == '__main__':
