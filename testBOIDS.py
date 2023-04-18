@@ -25,19 +25,19 @@ def RadCoh(a):
 def slider():
 	print("running")
 	slides = Tk()
-	Sep = Scale(slides, label = "Separation", from_ = 0, to = 100, resolution = 0.1, command = chaSep, orient = "horizontal" )
+	Sep = Scale(slides, label = "Separation", from_ = 0, to = 50, resolution = 0.01, command = chaSep, orient = "horizontal" )
 	Sep.set(5)
 	Sep.pack()
 
-	Rad = Scale(slides, label = "RAD", from_ = 0, to = 100, resolution = 0.1, command = RadCoh, orient = "horizontal" )
+	Rad = Scale(slides, label = "RAD", from_ = 0, to = 50, resolution = 0.01, command = RadCoh, orient = "horizontal" )
 	Rad.set(35)
 	Rad.pack()
 
-	ali = Scale(slides, label = "Alignment", from_ = 0, to = 100, resolution = 0.1, command = chaAli, orient = "horizontal" )
+	ali = Scale(slides, label = "Alignment", from_ = 0, to = 50, resolution = 0.01, command = chaAli, orient = "horizontal" )
 	ali.set(3)
 	ali.pack()
 
-	Coh = Scale(slides, label = "Cohesion", from_ = 0, to = 100, resolution = 0.1, command = chaCoh, orient = "horizontal" )
+	Coh = Scale(slides, label = "Cohesion", from_ = 0, to = 50, resolution = 0.01, command = chaCoh, orient = "horizontal" )
 	Coh.set(5)
 	Coh.pack()
 
