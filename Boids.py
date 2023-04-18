@@ -1,7 +1,8 @@
 import math,pygame,random,time
 class BOIDS:
-	
+
 	radDist = 80
+
 	#acceleration is the rate that velocity increases
 	def __init__(self, pos, screenSize,screen):
 		self.accel = pygame.math.Vector2(random.randint(-50, 50) * 0,random.randint(-50, 50) * 0)
@@ -10,6 +11,10 @@ class BOIDS:
 		self.screenSize = screenSize
 		self.screen = screen
 		self.neighbor = {}
+		self.perSep = 5
+		self.SepRad = 35
+		self.perAli = 3
+		self.perCoh = 5
 
 
 	def move(self):
@@ -53,7 +58,7 @@ class BOIDS:
 				self.neighbor[arr[boid]] = dist
 
 	def Separation(self):
-		per = 35
+		per = self.SepRad
 		x = 0
 		y = 0
 		keyList = list(self.neighbor.keys())
@@ -61,7 +66,7 @@ class BOIDS:
 			if(self.neighbor[keyList[near]] < per):
 				x += self.pos[0] - keyList[near].pos[0]
 				y += self.pos[1] - keyList[near].pos[1]
-		a = 0.0005
+		a = 0.0001 * self.perSep
 		self.accel[0] += x*a
 		self.accel[1] += y*a
 
@@ -76,7 +81,7 @@ class BOIDS:
 		if(len(keyList) > 0):	
 			x /= len(keyList) + 1
 			y /= len(keyList) + 1
-			a = 0.003
+			a = 0.001 * self.perAli
 			#print(self.pos," ",x," ",y)
 			self.accel[0] += x*a
 			self.accel[1] += y*a
@@ -95,7 +100,7 @@ class BOIDS:
 			#pygame.draw.circle(self.screen,"WHITE",(x,y),10,0)
 			x = self.pos[0] - x
 			y = self.pos[1] - y
-			a = 0.0005
+			a = 0.0001 * self.perCoh
 			#print(self.pos," ",x," ",y)
 			self.accel[0] -= x*a
 			self.accel[1] -= y*a
@@ -105,10 +110,9 @@ class BOIDS:
 		#self.velocity = [self.velocity[0] + self.accel[0], self.velocity[1] + self.accel[1]]
 		self.move()
 		self.accel = [0,0]
-		self.neighbors(arr, 130)
+		self.neighbors(arr, 100)
 		self.Cohesion()
 		self.Separation()
-		# self.neighbors(arr, 130)
 		self.Alignment()
 
 
