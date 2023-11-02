@@ -1,6 +1,5 @@
-Works but all the rules need a bit of tweaking for it to look proper.
-TO do
--Make them into triangles to point a certain direction
--It is also not optimised so that will be the next step to implement a quadtree.
--Then convert to octtree so that it will be 3-d
+# BOIDS
 
+Boids is an algorithm that will simulate the way birds flock or fish schooling. To simulate run testBOIDS.py. Sliders will appear to see how those variables affect one another. 
+
+![Untitled](BOIDS%20BOIDImage/sim.png)
